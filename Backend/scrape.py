@@ -88,7 +88,8 @@ async def ascrape_playwright(url) -> str:
         browser = await p.chromium.launch(headless=True)
         try:
             page = await browser.new_page()
-            await page.goto(url)
+            await page.goto(url, timeout=60000)
+            # page.setDefaultNavigationTimeout(60000)
             page_source = await page.content()
             remove_unwanted_tags_results = remove_unwanted_tags(page_source)
             results = remove_unnesseray_lines(extract_tags(remove_unwanted_tags_results, ["p", "li", "div", "a"]))
