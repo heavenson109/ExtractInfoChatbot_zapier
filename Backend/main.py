@@ -3,10 +3,11 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI, HTTPException
 
 import pprint
+import json
+import re
 
-from ai_extractor import extract
-from schemas import SchemaNewsWebsites, ecommerce_schema
-from scrape import ascrape_playwright
+from ai_extractor import extract, getRelevant
+from scrape import scrape_with_zenrows
 
 import uvicorn
 
@@ -20,41 +21,62 @@ app.add_middleware(
     allow_headers = ["*"],
 )
 
+app.extractedContents=[]
+
+def makeSchema(input):
+    list = input.split(",")
+    properties = {element: {"type": "string"} for element in list}
+    schema = {"properties": properties}
+    return schema
+
 async def scrape_with_playwright(url: str, **kwargs):
-    token_limit = 4000
+    token_limit = 16000
 
-    html_content = await ascrape_playwright(url)
-
-    print(html_content, "=====================html_contenet")
+    html_content = await scrape_with_zenrows(url)
 
     print("Extracting content with LLM")
 
-    html_content_fits_context_window = html_content[:token_limit]
-
+    wholeContent = ','.join(str(x) for x in html_content)
+    html_content_fits_context_window = wholeContent[:token_limit]
+    
     extracted_content = extract(**kwargs, content = html_content_fits_context_window)
 
     pprint.pprint(extracted_content)
     return extracted_content
 
-@app.get("/api/response")
-async def get_response(message: str, request: Request):
+@app.post("/api/extract")
+async def get_response(request: Request):
   try:
-    # Read request body
+    data = await request.json()
+
+    scrapedUrl = data['url'],
+    prompt = data['infoCol']
 
     print("start scraping...")
 
-    ecommerce_url = message
-    # car_url = "https://www.westgatehonda.ca/buildandprice/honda.html"
-
     response = await scrape_with_playwright(
-        # url=wsj_url,
-        url=ecommerce_url,
-        # schema_pydantic=SchemaNewsWebsites,
-        schema=ecommerce_schema,
-        # schema_pydantic=SchemaCar 
+        scrapedUrl,
+        schema=makeSchema(prompt)
     )
+
+    app.extractedContents=response
     return response
   
+  except Exception as e:
+    print(f"Error getting response: {e}")
+    raise HTTPException(status_code=500, detail="Error getting response")
+  
+@app.post("/api/relevant")
+async def get_response(request: Request):
+  try:
+    data = await request.json()
+    target = data['target']
+
+    target_list = re.split(r",\s*", target)
+    filtered_data = [d for d in app.extractedContents if "role" in d and any(target.lower() in d["role"].lower() for target in target_list)]
+    response = json.dumps(filtered_data, indent=2)
+    return response
+    
   except Exception as e:
     print(f"Error getting response: {e}")
     raise HTTPException(status_code=500, detail="Error getting response")

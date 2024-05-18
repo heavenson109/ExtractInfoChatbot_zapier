@@ -1,38 +1,37 @@
-import asyncio
-import pprint
-
+from pathlib import Path
 import requests
 from bs4 import BeautifulSoup
 from playwright.async_api import async_playwright
+from zenrows import ZenRowsClient
 
-def remove_unwanted_tags(html_content, unwanted_tags=["script", "style"]):
+def remove_unwanted_tags(html_content, unwanted_tags=["script", "style", "header", "footer", "img"]):
+    ### Remove script and style ###
     soup = BeautifulSoup(html_content, 'html.parser')
 
     for tag in unwanted_tags:
         for element in soup.find_all(tag):
             element.decompose()
 
+    bio_divs = soup.find_all('div', class_='bio')
+
+    for div in bio_divs:
+        div.decompose()
+
     return str(soup)
 
-def extract_tags(html_content, tags: list[str]):
+def extract_tags(html_content):
     soup = BeautifulSoup(html_content, 'html.parser')
-    text_parts = []
+    result =[]
+    li_tags = soup.find_all('li')
+    for li_tag in li_tags:
+        li_tag.insert(0, " ")
+        text = li_tag.text
+        email = li_tag.find('a')['href'].replace('mailto:', '') if li_tag.find('a') else None
+        result.append(text)
+        result.append(email)
 
-    for tag in tags:
-        elements = soup.find_all(tag)
-        
-        for element in elements:
-            #If the tag is a link (a tag), append its href as well
-            if tag == "a":
-                href = element.get('href')
-                if href:
-                    text_parts.append(f"{element.get_text()} ({href})")
-                else:
-                    text_parts.append(element.get_text())
-            else:
-                text_parts.append(element.get_text())
-
-    return ' '.join(text_parts)
+    print(result, "==========result")
+    return result
 
 def remove_unnesseray_lines(content):
     # Split content into lines
@@ -55,46 +54,15 @@ def remove_unnesseray_lines(content):
 
     return cleaned_content
 
-def scrape_by_url_raw(url: str):
-    "Scrape the main content text from a given url"
-
-    response = requests.get(url)
-    response.raise_for_status()
-
-    soup = BeautifulSoup(response.content, 'html.parser')
-
-    # Extract all the text content. This approach is generalized and
-    # might not always yield perfect results for all websites
-
-    content_text = soup.get_text()
-
-    html_content = response.text
-
-    return html_content
-
-def scrape(url: str, tags: list[str] = ["p", "li", "div", "a"]):
-    results = remove_unwanted_tags(scrape_by_url_raw(url))
-
-    results_formatted = remove_unnesseray_lines(
-        extract_tags(remove_unwanted_tags(results), tags=tags)
-    )
-
-    return results_formatted
-
-async def ascrape_playwright(url) -> str:
+async def scrape_with_zenrows(url) -> str:
     print("Started scraping...")
     results = ""
-    async with async_playwright() as p:
-        browser = await p.chromium.launch(headless=True)
-        try:
-            page = await browser.new_page()
-            await page.goto(url, timeout=60000)
-            # page.setDefaultNavigationTimeout(60000)
-            page_source = await page.content()
-            remove_unwanted_tags_results = remove_unwanted_tags(page_source)
-            results = remove_unnesseray_lines(extract_tags(remove_unwanted_tags_results, ["p", "li", "div", "a"]))
-            print("Content scraped")
-        except Exception as e:
-            results = f"Error: {e}"
-        await browser.close()
+
+    client = ZenRowsClient("307033e8d6c80c980a0a9f4351595371d129fd32")
+    params = {"js_render":"true"}
+    response = client.get(url, params=params)
+    page_source = response.text
+
+    remove_unwanted_tags_results = remove_unwanted_tags(page_source)
+    results = extract_tags(remove_unwanted_tags_results)
     return results

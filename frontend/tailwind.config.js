@@ -7,9 +7,15 @@ module.exports = {
         "playfair": ['Playfair Display SC']
       },
       height: {
-        "bodyHeight": "calc(100vh - 94px)"
+        "bodyHeight": "calc(100vh - 114px)"
+      },
+      scrollbar: {
+        thin: 'thin', // custom scrollbar thin
       }
     },
+  },
+  variants: {
+    scrollbar: ['rounded', 'dark'], // add dark variant
   },
   plugins: [],
 }
