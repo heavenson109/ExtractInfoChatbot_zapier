@@ -67,7 +67,10 @@ const ChatRoom = () => {
       infoCol
     }
 
-    await axios.post(`http://localhost:8000/api/extract`, data)
+    domain ="https://extract-info-chatbot-zapier.vercel.app:8000"
+    testDomain="http://localhost:8000"
+
+    await axios.post(`${domain}/api/extract`, data)
       .then((response) => {
         setIsLoading(false)
         setChatHistory([...chatHistory, { question: infoCol, answers: response.data }])
