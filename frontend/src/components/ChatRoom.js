@@ -67,7 +67,7 @@ const ChatRoom = () => {
       infoCol
     }
 
-    const domain ="https://extractinfochatbot-zapier.onrender.com/"
+    const domain ="https://extractinfochatbot-zapier.onrender.com"
     const localDomain="http://localhost:8000"
 
     await axios.post(`${domain}/api/extract`, data)
