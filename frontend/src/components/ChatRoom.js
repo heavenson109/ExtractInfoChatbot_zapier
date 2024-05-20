@@ -85,7 +85,10 @@ const ChatRoom = () => {
       target
     }
 
-    await axios.post(`http://localhost:8000/api/relevant`, data)
+    const domain ="https://extractinfochatbot-zapier.onrender.com"
+    const localDomain="http://localhost:8000"
+
+    await axios.post(`${domain}/api/relevant`, data)
       .then((response) => {
         setIsLoading(false)
         const clearResponse = response.data.replace(/[\n\\]/g, '')
