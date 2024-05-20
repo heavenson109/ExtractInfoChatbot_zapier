@@ -1,2 +1,7 @@
 fastapi
 uvicorn
+langchain
+bs4
+playwright
+zenrows
+langchain
