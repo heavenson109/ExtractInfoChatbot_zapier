@@ -67,8 +67,8 @@ const ChatRoom = () => {
       infoCol
     }
 
-    const domain ="https://extract-info-chatbot-zapier.vercel.app"
-    const testDomain="http://localhost:8000"
+    const domain ="https://extractinfochatbot-zapier.onrender.com/"
+    const localDomain="http://localhost:8000"
 
     await axios.post(`${domain}/api/extract`, data)
       .then((response) => {
