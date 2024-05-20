@@ -6,9 +6,11 @@ from langchain.prompts import PromptTemplate
 from langchain.prompts import HumanMessagePromptTemplate
 from langchain.prompts import SystemMessagePromptTemplate
 from langchain.prompts import ChatPromptTemplate
-# load_dotenv()
+from dotenv import load_dotenv
 
-# openai_api_key = os.getenv('OPENAI_API_KEY')
+load_dotenv()
+
+openai_api_key = os.getenv('openai_api_key')
 
 system_message_prompt = SystemMessagePromptTemplate.from_template(
     "The user provides you the people's data with json format and the people list what the user want to get. Your aim is to find that relevant data and return it with json format."
@@ -19,7 +21,7 @@ human_message_prompt = HumanMessagePromptTemplate.from_template(
     "{question}"
 )
 
-llm = ChatOpenAI(temperature=0, model="gpt-3.5-turbo-0125", openai_api_key = "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")
+llm = ChatOpenAI(temperature=0, model="gpt-3.5-turbo-0125", openai_api_key=openai_api_key)
 
 def extract(content: str, **kwargs):
     if 'schema_pydantic' in kwargs:

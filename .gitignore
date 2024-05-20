@@ -2,6 +2,8 @@ Backend/myenv
 
 Backend/__pycache__
 
+Backend/.env
+
 frontend/node_modules
 
 node_modules
