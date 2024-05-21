@@ -141,7 +141,10 @@ const ChatRoom = () => {
                   <img src={logoColorSVG} alt="" className='w-6 h-6' />
                   <div className='flex flex-col'>
                     {qa?.answers.map((answer, aIndex) => (
-                      <p key={`answer_${aIndex}`}>{JSON.stringify(answer)}</p>
+                      <p key={`answer_${aIndex}`}>
+                        {/* {JSON.stringify(answer) }*/}
+                        {Object.values(answer).join(', ')}
+                      </p>
                     ))}
                   </div>
                 </div>
