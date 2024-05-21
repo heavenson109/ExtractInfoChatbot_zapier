@@ -58,7 +58,7 @@ async def scrape_with_zenrows(url) -> str:
     print("Started scraping...")
     results = ""
 
-    client = ZenRowsClient("307033e8d6c80c980a0a9f4351595371d129fd32")
+    client = ZenRowsClient("2336e42011144321d1aba3e5d5851efd672b1782")
     params = {"js_render":"true"}
     response = client.get(url, params=params)
     page_source = response.text
