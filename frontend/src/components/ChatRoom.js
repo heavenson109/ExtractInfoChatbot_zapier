@@ -41,7 +41,8 @@ const MOCK_DATA = [
 const version = process.env.version
 console.log(version, "======================version")
 // const domain = version === 'test' ? "http://localhost:8000" : "https://extractinfochatbot-zapier.onrender.com"
-const domain = "http://localhost:8000" 
+// const domain = "http://localhost:8000" 
+const domain =  "https://extractinfochatbot-zapier.onrender.com"
 
 const ChatRoom = () => {
   const [url, setUrl] = useState("")
