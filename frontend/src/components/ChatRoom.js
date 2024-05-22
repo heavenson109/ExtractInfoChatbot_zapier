@@ -34,7 +34,15 @@ const MOCK_DATA = [
   }, {
     title: "Targets",
     items: ["Dealer principal, General Manager..."],
-    contents: ["Dealer principal, General Manager, General Sales Manager, New car sales Manager, New vehicle Sales Manager, Sales Manager, New car sales Manager, New vehicle sales Manager, Sales Manager, Fixed Operations Manager, Service Manager, President, Vice president"]
+    contents: [
+      "Dealer principal,\
+      General Manager, \
+      Sales Manager, \
+      Fixed Operations Manager, \
+      Service Manager, \
+      President, \
+      Director"
+    ]
   }
 ]
 
