@@ -34,9 +34,14 @@ const MOCK_DATA = [
   }, {
     title: "Targets",
     items: ["Dealer principal, General Manager..."],
-    contents: ["Dealer principal, General Manager, General Sales Manager, New car sales Manager, New vehicle Sales Manager, Sales Manager, New car sales Manager, New vehicle sales Manager, Sales Manager, Fixed Operations Manager, Service Manager, President, Voice president"]
+    contents: ["Dealer principal, General Manager, General Sales Manager, New car sales Manager, New vehicle Sales Manager, Sales Manager, New car sales Manager, New vehicle sales Manager, Sales Manager, Fixed Operations Manager, Service Manager, President, Vice president"]
   }
 ]
+
+const version = process.env.version
+console.log(version, "======================version")
+// const domain = version === 'test' ? "http://localhost:8000" : "https://extractinfochatbot-zapier.onrender.com"
+const domain = "http://localhost:8000" 
 
 const ChatRoom = () => {
   const [url, setUrl] = useState("")
@@ -56,7 +61,6 @@ const ChatRoom = () => {
       default:
         setTarget(content)
     }
-
   }
 
   const handleExtraction = async () => {
@@ -66,10 +70,7 @@ const ChatRoom = () => {
       url,
       infoCol
     }
-
-    const domain ="https://extractinfochatbot-zapier.onrender.com"
-    const localDomain="http://localhost:8000"
-
+ 
     await axios.post(`${domain}/api/extract`, data)
       .then((response) => {
         setIsLoading(false)
@@ -84,9 +85,6 @@ const ChatRoom = () => {
       // target: JSON.stringify(chatHistory[chatHistory.length-1].answers)+target
       target
     }
-
-    const domain ="https://extractinfochatbot-zapier.onrender.com"
-    const localDomain="http://localhost:8000"
 
     await axios.post(`${domain}/api/relevant`, data)
       .then((response) => {
